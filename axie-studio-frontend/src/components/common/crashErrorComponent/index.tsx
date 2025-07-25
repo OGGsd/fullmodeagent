@@ -26,16 +26,7 @@ export default function CrashErrorComponent({
             <CardContent className="grid">
               <div>
                 <p>
-                  Please report errors with detailed tracebacks on the{" "}
-                  <a
-                    href="https://github.com/langflow-ai/langflow/issues"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium hover:underline"
-                  >
-                    GitHub Issues
-                  </a>{" "}
-                  page.
+                  Please contact Axie Studio support for assistance with this error.
                   <br></br>
                   Thank you!
                 </p>
@@ -44,15 +35,15 @@ export default function CrashErrorComponent({
 
             <CardFooter>
               <div className="m-auto mt-4 flex justify-center">
-                <Button onClick={resetErrorBoundary}>Restart Langflow</Button>
+                <Button onClick={resetErrorBoundary}>Restart Axie Studio</Button>
 
                 <a
-                  href="https://github.com/langflow-ai/langflow/issues/new"
+                  href="mailto:support@axiestudio.se"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Button className="ml-3" ignoreTitleCase variant={"outline"}>
-                    Report on GitHub
+                    Contact Support
                   </Button>
                 </a>
               </div>
