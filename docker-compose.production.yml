@@ -1,0 +1,161 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-langflow}
+      POSTGRES_USER: ${POSTGRES_USER:-langflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-langflow}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - axiestudio-network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - axiestudio-network
+
+  # Langflow Backend
+  langflow-backend:
+    image: langflowai/langflow:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Database Configuration
+      - LANGFLOW_DATABASE_URL=postgresql://${POSTGRES_USER:-langflow}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-langflow}
+      
+      # Redis Configuration
+      - LANGFLOW_REDIS_URL=redis://redis:6379
+      - LANGFLOW_CACHE_TYPE=redis
+      
+      # Application Configuration
+      - LANGFLOW_LOG_LEVEL=INFO
+      - LANGFLOW_AUTO_LOGIN=false
+      - LANGFLOW_SUPERUSER=${LANGFLOW_SUPERUSER:-admin@axiestudio.se}
+      - LANGFLOW_SUPERUSER_PASSWORD=${LANGFLOW_SUPERUSER_PASSWORD}
+      
+      # Multi-tenant Configuration
+      - LANGFLOW_ENABLE_MULTI_USER=true
+      - LANGFLOW_STORE_ENVIRONMENT_VARIABLES=true
+      
+      # Security Configuration
+      - LANGFLOW_SECRET_KEY=${LANGFLOW_SECRET_KEY}
+      - LANGFLOW_JWT_SECRET=${LANGFLOW_JWT_SECRET}
+      
+      # Performance Configuration
+      - LANGFLOW_WORKER_TIMEOUT=300
+      - LANGFLOW_MAX_FILE_SIZE_UPLOAD=100
+      
+    ports:
+      - "7860:7860"
+    volumes:
+      - langflow_data:/app/data
+      - langflow_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - axiestudio-network
+
+  # Axie Studio Frontend
+  axie-studio-frontend:
+    build:
+      context: ./axie-studio-frontend
+      dockerfile: Dockerfile.axie-studio
+      args:
+        - NODE_ENV=production
+    depends_on:
+      langflow-backend:
+        condition: service_healthy
+    environment:
+      # Backend Connection
+      - LANGFLOW_BACKEND_URL=http://langflow-backend:7860
+      - NODE_ENV=production
+      
+      # Frontend Configuration
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL:-http://localhost:7860}
+      - REACT_APP_MULTI_TENANT=true
+      - REACT_APP_DEFAULT_DOMAIN=${DEFAULT_DOMAIN:-axiestudio.com}
+      - REACT_APP_CONTACT_EMAIL=${CONTACT_EMAIL:-stefan@axiestudio.se}
+      
+      # Multi-tenant Configuration
+      - ENABLE_MULTI_TENANT=true
+      - ENABLE_WHITE_LABEL=true
+      
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # SSL certificates (if using custom SSL)
+      - ./ssl:/etc/nginx/ssl:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - axiestudio-network
+
+  # Nginx Load Balancer (Optional - for custom domain routing)
+  nginx-proxy:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - axie-studio-frontend
+    restart: unless-stopped
+    networks:
+      - axiestudio-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  langflow_data:
+    driver: local
+  langflow_logs:
+    driver: local
+
+networks:
+  axiestudio-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

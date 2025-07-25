@@ -1,0 +1,31 @@
+{
+  "name": "Axie Studio",
+  "short_name": "Axie Studio",
+  "description": "Axie Studio is a powerful AI platform that makes it easier to build and deploy intelligent applications with multi-tenant support.",
+  "icons": [
+    {
+      "src": "https://www.axiestudio.se/logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://www.axiestudio.se/logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    },
+    {
+      "src": "https://www.axiestudio.se/logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "256x256"
+    },
+    {
+      "src": "https://www.axiestudio.se/logo.jpg",
+      "type": "image/jpeg",
+      "sizes": "128x128"
+    }
+  ],
+  "categories": ["developer", "productivity", "utilities"],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

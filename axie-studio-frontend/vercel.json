@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "env": {
+    "VITE_BACKEND_URL": "https://langflow-tv34o.ondigitalocean.app",
+    "VITE_LANGFLOW_URL": "https://langflow-tv34o.ondigitalocean.app",
+    "VITE_MULTI_TENANT": "true",
+    "VITE_DEFAULT_DOMAIN": "axiestudio.com",
+    "VITE_CONTACT_EMAIL": "stefan@axiestudio.se"
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://langflow-tv34o.ondigitalocean.app/api/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}

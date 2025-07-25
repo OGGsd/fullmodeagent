@@ -1,0 +1,57 @@
+{
+  "name": "axie-studio-frontend",
+  "version": 2,
+  "builds": [
+    {
+      "src": "axie-studio-frontend/package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://your-backend-app.ondigitalocean.app/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/axie-studio-frontend/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "REACT_APP_BACKEND_URL": "https://your-backend-app.ondigitalocean.app",
+    "REACT_APP_LANGFLOW_URL": "https://your-langflow-app.ondigitalocean.app",
+    "REACT_APP_MULTI_TENANT": "true",
+    "REACT_APP_DEFAULT_DOMAIN": "axiestudio.com"
+  },
+  "functions": {
+    "axie-studio-frontend/src/api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://your-backend-app.ondigitalocean.app/api/$1"
+    }
+  ]
+}
