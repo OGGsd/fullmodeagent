@@ -22,7 +22,7 @@ const getLangflowBackendUrl = (): string => {
     return process.env.BACKEND_URL;
   }
 
-  // Default to our Langflow instance
+  // Default to our backend instance
   return "https://langflow-tv34o.ondigitalocean.app";
 };
 

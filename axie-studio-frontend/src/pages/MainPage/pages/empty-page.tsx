@@ -15,7 +15,7 @@ import { useFolderStore } from "@/stores/foldersStore";
 import { formatNumber } from "@/utils/utils";
 import useFileDrop from "../hooks/use-on-file-drop";
 
-const EMPTY_PAGE_TITLE = "Welcome to Langflow";
+const EMPTY_PAGE_TITLE = "Welcome to Axie Studio";
 const EMPTY_PAGE_DESCRIPTION = "Your new favorite way to ship Agents";
 const EMPTY_PAGE_GITHUB_DESCRIPTION =
   "Follow development, star the repo, and shape the future.";

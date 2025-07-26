@@ -83,8 +83,8 @@ export default function SettingsPage(): JSX.Element {
 
   // TODO: Remove this on cleanup
   if (!ENABLE_DATASTAX_AXIE_STUDIO) {
-    const langflowItems = CustomStoreSidebar(true, ENABLE_AXIE_STUDIO_STORE);
-    sidebarNavItems.splice(2, 0, ...langflowItems);
+    const storeItems = CustomStoreSidebar(true, ENABLE_AXIE_STUDIO_STORE);
+    sidebarNavItems.splice(2, 0, ...storeItems);
   }
 
   return (
