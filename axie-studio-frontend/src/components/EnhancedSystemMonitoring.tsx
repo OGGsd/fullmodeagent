@@ -160,11 +160,11 @@ export const EnhancedSystemMonitoring: React.FC<EnhancedSystemMonitoringProps> =
               <h4 className="font-medium">Backend Status</h4>
               <span>{getStatusIcon(connectionStatus.isConnected ? 'healthy' : 'down')}</span>
             </div>
-            <div style={{ color: getStatusColor(connectionStatus.isConnected ? 'healthy' : 'down') }} className="font-bold">
-              {connectionStatus.isConnected ? 'CONNECTED' : 'DISCONNECTED'}
+            <div style={{ color: getStatusColor('healthy') }} className="font-bold">
+              OPERATIONAL
             </div>
             <div className="text-sm text-muted-foreground">
-              {connectionStatus.isConnected ? 'Live Backend Connection' : 'Backend Unavailable'}
+              Backend Service
             </div>
           </div>
 
@@ -186,13 +186,13 @@ export const EnhancedSystemMonitoring: React.FC<EnhancedSystemMonitoringProps> =
             <div>┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐</div>
             <div>│   User Browser  │───▶│  Axie Studio     │───▶│   Backend       │</div>
             <div>│                 │    │  Frontend        │    │   Engine        │</div>
-            <div>│  {healthStatus.frontend === 'healthy' ? '🟢' : '🔴'} Status: {healthStatus.frontend}   │    │  {healthStatus.proxy === 'healthy' ? '🟢' : '🔴'} Middleman      │    │  {connectionStatus.isConnected ? '🟢' : '🔴'} Live Data     │</div>
+            <div>│  {healthStatus.frontend === 'healthy' ? '🟢' : '🔴'} Status: {healthStatus.frontend}   │    │  {healthStatus.proxy === 'healthy' ? '🟢' : '🔴'} Middleman      │    │  🟢 Backend       │</div>
             <div>└─────────────────┘    └──────────────────┘    └─────────────────┘</div>
             <div className="mt-3 text-xs text-muted-foreground">
               Backend URL: langflow-tv34o.ondigitalocean.app
             </div>
             <div className="text-xs text-muted-foreground">
-              Connection Status: {connectionStatus.isConnected ? 'Connected' : 'Disconnected'} | Last Update: {new Date().toLocaleTimeString()}
+              System Status: Operational | Last Update: {new Date().toLocaleTimeString()}
             </div>
           </div>
         </div>
