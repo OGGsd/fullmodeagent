@@ -5,7 +5,7 @@ export interface ApiProxyConfig {
   proxyHeaders: Record<string, string>;
 }
 
-// Get the Langflow backend URL from environment or default
+// Get the backend URL from environment or default
 const getLangflowBackendUrl = (): string => {
   // Check for Vite environment variables first
   if (import.meta.env.VITE_BACKEND_URL) {
