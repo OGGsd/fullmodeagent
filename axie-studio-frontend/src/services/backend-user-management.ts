@@ -1,5 +1,5 @@
 // Backend-Integrated User Management for Axie Studio
-// This service properly integrates with Langflow's user system for complete isolation
+// This service properly integrates with the backend user system for complete isolation
 
 import { robustMiddleman } from './robust-middleman';
 
@@ -29,7 +29,7 @@ export interface UpdateUserRequest {
 
 export class BackendUserManagementService {
   
-  // Create user in Langflow backend (proper isolation)
+  // Create user in backend (proper isolation)
   async createUser(userData: CreateUserRequest): Promise<BackendUser> {
     try {
       const response = await robustMiddleman.post('/api/v1/users/', {

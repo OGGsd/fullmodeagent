@@ -1,4 +1,4 @@
-// API Proxy Configuration for Axie Studio -> Langflow Backend
+// API Proxy Configuration for Axie Studio -> Backend
 export interface ApiProxyConfig {
   langflowBackendUrl: string;
   enableProxy: boolean;
@@ -36,7 +36,7 @@ export const API_PROXY_CONFIG: ApiProxyConfig = {
   }
 };
 
-// API endpoint mappings - maps Axie Studio frontend calls to Langflow backend endpoints
+// API endpoint mappings - maps Axie Studio frontend calls to backend endpoints
 export const API_ENDPOINT_MAPPINGS = {
   // Authentication endpoints
   '/api/v1/login': '/api/v1/login',
