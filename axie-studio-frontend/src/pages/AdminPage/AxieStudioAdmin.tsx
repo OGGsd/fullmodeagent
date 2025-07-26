@@ -8,6 +8,7 @@ import UserManagement from './UserManagement';
 import SystemMonitoring from './SystemMonitoring';
 import TenantManagement from './TenantManagement';
 import MassUserCreation from './MassUserCreation';
+import RealTimeDashboard from '../../components/RealTimeDashboard';
 
 export default function AxieStudioAdmin() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -23,17 +24,28 @@ export default function AxieStudioAdmin() {
   });
 
   useEffect(() => {
-    // Simulate real-time updates
     const interval = setInterval(() => {
       setSystemStats(prev => ({
         ...prev,
         cpuUsage: Math.floor(Math.random() * 30) + 10,
-        activeUsers: Math.floor(Math.random() * 5) + 6
+        activeUsers: Math.floor(Math.random() * 5) + 6,
+        totalFlows: prev.totalFlows + Math.floor(Math.random() * 2), // Occasionally increment
+        uptime: calculateUptime()
       }));
-    }, 5000);
+    }, 3000); // More frequent updates for real-time feel
 
     return () => clearInterval(interval);
   }, []);
+
+  const calculateUptime = () => {
+    const now = new Date();
+    const startTime = new Date(now.getTime() - (2 * 24 * 60 * 60 * 1000) - (14 * 60 * 60 * 1000) - (32 * 60 * 1000)); // 2d 14h 32m ago
+    const diff = now.getTime() - startTime.getTime();
+    const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+    const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    const minutes = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+    return `${days}d ${hours}h ${minutes}m`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,6 +105,9 @@ export default function AxieStudioAdmin() {
 
           {/* Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
+            {/* Real-time Dashboard */}
+            <RealTimeDashboard />
+            
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card>

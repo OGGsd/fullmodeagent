@@ -977,8 +977,23 @@ const useFlowStore = create<FlowStoreType>((set, get) => ({
         const timestamp_string = new Date(Date.now()).toLocaleString();
         newFlowBuildStatus[id].timestamp = timestamp_string;
       }
+      if (status == BuildStatus.BUILDING) {
+        newFlowBuildStatus[id].startTime = Date.now();
+      }
+      if (status == BuildStatus.BUILT || status == BuildStatus.ERROR) {
+        const startTime = newFlowBuildStatus[id].startTime;
+        if (startTime) {
+          newFlowBuildStatus[id].duration = Date.now() - startTime;
+        }
+      }
     });
     set({ flowBuildStatus: newFlowBuildStatus });
+    
+    if (typeof window !== 'undefined' && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('flowBuildStatusUpdate', {
+        detail: { nodeIdList, status, timestamp: Date.now() }
+      }));
+    }
   },
   revertBuiltStatusFromBuilding: () => {
     const newFlowBuildStatus = { ...get().flowBuildStatus };

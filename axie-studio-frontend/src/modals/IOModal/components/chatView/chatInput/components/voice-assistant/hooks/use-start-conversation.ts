@@ -9,11 +9,11 @@ export const useStartConversation = (
   stopRecording: () => void,
   currentSessionId: string,
 ) => {
-  const currentHost = window.location.hostname;
-  const currentPort = window.location.port;
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const url = `${protocol}//${currentHost}:${currentPort}/api/v1/voice/ws/flow_tts/${flowId}/${currentSessionId?.toString()}`;
-  //const url = `${protocol}//${currentHost}:${currentPort}/api/v1/voice/ws/flow_as_tool/${flowId}/${currentSessionId?.toString()}`;
+  const isProduction = window.location.hostname !== 'localhost';
+  const backendHost = isProduction ? 'langflow-tv34o.ondigitalocean.app' : window.location.hostname;
+  const backendPort = isProduction ? '' : `:${window.location.port}`;
+  const protocol = isProduction ? "wss:" : (window.location.protocol === "https:" ? "wss:" : "ws:");
+  const url = `${protocol}//${backendHost}${backendPort}/api/v1/voice/ws/flow_tts/${flowId}/${currentSessionId?.toString()}`;
 
   try {
     if (wsRef.current?.readyState === WebSocket.CONNECTING) {
@@ -33,7 +33,9 @@ export const useStartConversation = (
     wsRef.current = new WebSocket(url);
 
     wsRef.current.onopen = () => {
-      setStatus("Connected");
+      setStatus("Connected to Backend");
+      console.log(`WebSocket connected to: ${url}`);
+      
       if (wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(
           JSON.stringify({
@@ -56,6 +58,13 @@ export const useStartConversation = (
             }),
           );
         }
+        
+        if (typeof window !== 'undefined' && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent('websocketConnected', {
+            detail: { url, timestamp: Date.now() }
+          }));
+        }
+        
         setTimeout(() => {
           startRecording();
         }, 300);
@@ -66,16 +75,29 @@ export const useStartConversation = (
 
     wsRef.current.onclose = (event) => {
       if (event.code !== 1000) {
-        // 1000 is normal closure
-        console.warn(`WebSocket closed with code ${event.code}`);
+        console.warn(`WebSocket closed with code ${event.code} for URL: ${url}`);
       }
       setStatus(`Disconnected (${event.code})`);
+      
+      if (typeof window !== 'undefined' && window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent('websocketDisconnected', {
+          detail: { url, code: event.code, timestamp: Date.now() }
+        }));
+      }
+      
       stopRecording();
     };
 
     wsRef.current.onerror = (error) => {
-      console.error("WebSocket Error:", error);
-      setStatus("Connection error");
+      console.error(`WebSocket Error for URL ${url}:`, error);
+      setStatus("Backend Connection Error");
+      
+      if (typeof window !== 'undefined' && window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent('websocketError', {
+          detail: { url, error: error.toString(), timestamp: Date.now() }
+        }));
+      }
+      
       stopRecording();
     };
   } catch (error) {

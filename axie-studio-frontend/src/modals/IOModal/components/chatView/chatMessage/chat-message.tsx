@@ -55,36 +55,82 @@ export default function ChatMessage({
     chatMessageRef.current = chatMessage;
   }, [chat, isBuilding]);
 
-  // The idea now is that chat.stream_url MAY be a URL if we should stream the output of the chat
-  // probably the message is empty when we have a stream_url
-  // what we need is to update the chat_message with the SSE data
   const streamChunks = (url: string) => {
-    setIsStreaming(true); // Streaming starts
+    setIsStreaming(true);
+    console.log(`Starting SSE stream from: ${url}`);
+    
+    if (typeof window !== 'undefined' && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('sseStreamStarted', {
+        detail: { url, timestamp: Date.now() }
+      }));
+    }
+    
     return new Promise<boolean>((resolve, reject) => {
       eventSource.current = new EventSource(url);
+      
+      eventSource.current.onopen = () => {
+        console.log(`SSE connection opened for: ${url}`);
+      };
+      
       eventSource.current.onmessage = (event) => {
-        const parsedData = JSON.parse(event.data);
-        if (parsedData.chunk) {
-          setChatMessage((prev) => prev + parsedData.chunk);
+        try {
+          const parsedData = JSON.parse(event.data);
+          if (parsedData.chunk) {
+            setChatMessage((prev) => prev + parsedData.chunk);
+            
+            if (typeof window !== 'undefined' && window.dispatchEvent) {
+              window.dispatchEvent(new CustomEvent('sseChunkReceived', {
+                detail: { url, chunkLength: parsedData.chunk.length, timestamp: Date.now() }
+              }));
+            }
+          }
+        } catch (error) {
+          console.error('Error parsing SSE data:', error);
         }
       };
+      
       eventSource.current.onerror = (event: any) => {
+        console.error(`SSE Error for URL ${url}:`, event);
         setIsStreaming(false);
         eventSource.current?.close();
         setStreamUrl(undefined);
-        if (JSON.parse(event.data)?.error) {
+        
+        if (typeof window !== 'undefined' && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent('sseError', {
+            detail: { url, error: event.toString(), timestamp: Date.now() }
+          }));
+        }
+        
+        try {
+          if (event.data && JSON.parse(event.data)?.error) {
+            setErrorData({
+              title: "Error on Streaming",
+              list: [JSON.parse(event.data)?.error],
+            });
+          }
+        } catch (parseError) {
           setErrorData({
-            title: "Error on Streaming",
-            list: [JSON.parse(event.data)?.error],
+            title: "Streaming Connection Error",
+            list: ["Failed to connect to backend streaming service"],
           });
         }
+        
         updateChat(chat, chatMessageRef.current);
         reject(new Error("Streaming failed"));
       };
+      
       eventSource.current.addEventListener("close", (event) => {
-        setStreamUrl(undefined); // Update state to reflect the stream is closed
+        console.log(`SSE connection closed for: ${url}`);
+        setStreamUrl(undefined);
         eventSource.current?.close();
         setIsStreaming(false);
+        
+        if (typeof window !== 'undefined' && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent('sseStreamClosed', {
+            detail: { url, timestamp: Date.now() }
+          }));
+        }
+        
         resolve(true);
       });
     });

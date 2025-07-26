@@ -212,6 +212,8 @@ export type FlowStoreType = {
     [key: string]: {
       status: BuildStatus;
       timestamp?: string;
+      startTime?: number;
+      duration?: number;
     };
   };
   updateFlowPool: (

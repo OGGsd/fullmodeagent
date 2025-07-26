@@ -15,6 +15,8 @@ import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 import useTheme from "@/customization/hooks/use-custom-theme";
 import useAlertStore from "@/stores/alertStore";
 import FlowMenu from "./components/FlowMenu";
+import RealTimeIndicator from "../../RealTimeIndicator";
+import useRealTimeConnection from "../../../hooks/useRealTimeConnection";
 
 export default function AppHeader(): JSX.Element {
   const notificationCenter = useAlertStore((state) => state.notificationCenter);
@@ -22,6 +24,7 @@ export default function AppHeader(): JSX.Element {
   const [activeState, setActiveState] = useState<"notifications" | null>(null);
   const notificationRef = useRef<HTMLButtonElement | null>(null);
   const notificationContentRef = useRef<HTMLDivElement | null>(null);
+  const connectionStatus = useRealTimeConnection();
   useTheme();
 
   useEffect(() => {
@@ -77,6 +80,11 @@ export default function AppHeader(): JSX.Element {
             <CustomProductSelector />
           </>
         )}
+        <RealTimeIndicator 
+          isConnected={connectionStatus.isConnected}
+          lastUpdate={connectionStatus.lastPing}
+          className="ml-2"
+        />
       </div>
 
       {/* Middle Section */}
