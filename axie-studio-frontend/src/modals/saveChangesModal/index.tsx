@@ -59,7 +59,7 @@ export function SaveChangesModal({
             <a
               target="_blank"
               className="text-secondary underline"
-              href="https://docs.langflow.org/configuration-auto-save"
+              href="https://axiestudio.se/docs/configuration-auto-save"
               rel="noopener"
             >
               Enable auto-saving

@@ -70,7 +70,7 @@ export const EmptyPageCommunity = ({
               <div className="z-50 dark:hidden">
                 <img
                   src={logoLightPng}
-                  alt="Langflow Logo Light"
+                  alt="Axie Studio Logo Light"
                   data-testid="empty_page_logo_light"
                   className="relative top-3"
                 />
@@ -78,7 +78,7 @@ export const EmptyPageCommunity = ({
               <div className="z-50 hidden dark:block">
                 <img
                   src={logoDarkPng}
-                  alt="Langflow Logo Dark"
+                  alt="Axie Studio Logo Dark"
                   data-testid="empty_page_logo_dark"
                   className="relative top-3"
                 />

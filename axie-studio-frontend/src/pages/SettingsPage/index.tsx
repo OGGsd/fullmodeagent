@@ -3,8 +3,8 @@ import SideBarButtonsComponent from "@/components/core/sidebarComponent";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { CustomStoreSidebar } from "@/customization/components/custom-store-sidebar";
 import {
-  ENABLE_DATASTAX_LANGFLOW,
-  ENABLE_LANGFLOW_STORE,
+  ENABLE_DATASTAX_AXIE_STUDIO,
+  ENABLE_AXIE_STUDIO_STORE,
   ENABLE_PROFILE_ICONS,
 } from "@/customization/feature-flags";
 import useAuthStore from "@/stores/authStore";
@@ -82,8 +82,8 @@ export default function SettingsPage(): JSX.Element {
   );
 
   // TODO: Remove this on cleanup
-  if (!ENABLE_DATASTAX_LANGFLOW) {
-    const langflowItems = CustomStoreSidebar(true, ENABLE_LANGFLOW_STORE);
+  if (!ENABLE_DATASTAX_AXIE_STUDIO) {
+    const langflowItems = CustomStoreSidebar(true, ENABLE_AXIE_STUDIO_STORE);
     sidebarNavItems.splice(2, 0, ...langflowItems);
   }
 
