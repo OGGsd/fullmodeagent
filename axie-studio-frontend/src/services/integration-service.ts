@@ -1,5 +1,5 @@
 // Axie Studio Integration Service
-// Seamless integration between Frontend, Middleman, and Langflow Backend
+// Seamless integration between Frontend, Middleman, and Backend
 
 import { enhancedMiddleman } from './enhanced-middleman';
 import { templateManager } from './template-manager';

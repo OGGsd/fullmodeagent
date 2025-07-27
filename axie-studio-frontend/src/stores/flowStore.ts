@@ -11,7 +11,7 @@ import { create } from "zustand";
 import { checkCodeValidity } from "@/CustomNodes/helpers/check-code-validity";
 import { MISSED_ERROR_ALERT } from "@/constants/alerts_constants";
 import { BROKEN_EDGES_WARNING } from "@/constants/constants";
-import { ENABLE_DATASTAX_LANGFLOW } from "@/customization/feature-flags";
+import { ENABLE_DATASTAX_AXIE_STUDIO } from "@/customization/feature-flags";
 import {
   track,
   trackDataLoaded,
@@ -773,7 +773,7 @@ const useFlowStore = create<FlowStoreType>((set, get) => ({
           ...next_vertices_ids,
         ];
         if (
-          ENABLE_DATASTAX_LANGFLOW &&
+          ENABLE_DATASTAX_AXIE_STUDIO &&
           vertexBuildData?.id?.includes("AstraDB")
         ) {
           const search_results: LogsLogType[] = Object.values(
@@ -977,8 +977,23 @@ const useFlowStore = create<FlowStoreType>((set, get) => ({
         const timestamp_string = new Date(Date.now()).toLocaleString();
         newFlowBuildStatus[id].timestamp = timestamp_string;
       }
+      if (status == BuildStatus.BUILDING) {
+        newFlowBuildStatus[id].startTime = Date.now();
+      }
+      if (status == BuildStatus.BUILT || status == BuildStatus.ERROR) {
+        const startTime = newFlowBuildStatus[id].startTime;
+        if (startTime) {
+          newFlowBuildStatus[id].duration = Date.now() - startTime;
+        }
+      }
     });
     set({ flowBuildStatus: newFlowBuildStatus });
+    
+    if (typeof window !== 'undefined' && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('flowBuildStatusUpdate', {
+        detail: { nodeIdList, status, timestamp: Date.now() }
+      }));
+    }
   },
   revertBuiltStatusFromBuilding: () => {
     const newFlowBuildStatus = { ...get().flowBuildStatus };

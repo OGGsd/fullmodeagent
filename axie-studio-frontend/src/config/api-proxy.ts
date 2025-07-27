@@ -1,11 +1,11 @@
-// API Proxy Configuration for Axie Studio -> Langflow Backend
+// API Proxy Configuration for Axie Studio -> Backend
 export interface ApiProxyConfig {
   langflowBackendUrl: string;
   enableProxy: boolean;
   proxyHeaders: Record<string, string>;
 }
 
-// Get the Langflow backend URL from environment or default
+// Get the backend URL from environment or default
 const getLangflowBackendUrl = (): string => {
   // Check for Vite environment variables first
   if (import.meta.env.VITE_BACKEND_URL) {
@@ -22,7 +22,7 @@ const getLangflowBackendUrl = (): string => {
     return process.env.BACKEND_URL;
   }
 
-  // Default to our Langflow instance
+  // Default to our backend instance
   return "https://langflow-tv34o.ondigitalocean.app";
 };
 
@@ -36,7 +36,7 @@ export const API_PROXY_CONFIG: ApiProxyConfig = {
   }
 };
 
-// API endpoint mappings - maps Axie Studio frontend calls to Langflow backend endpoints
+// API endpoint mappings - maps Axie Studio frontend calls to backend endpoints
 export const API_ENDPOINT_MAPPINGS = {
   // Authentication endpoints
   '/api/v1/login': '/api/v1/login',

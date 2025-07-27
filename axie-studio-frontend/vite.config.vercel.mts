@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
     process.env.VITE_BACKEND_URL || 
     "https://agent-platform-backend.ondigitalocean.app";
 
-  // Langflow URL - your existing instance
+  // Backend URL - your existing instance
   const langflowUrl = 
     env.VITE_LANGFLOW_URL || 
     process.env.VITE_LANGFLOW_URL || 

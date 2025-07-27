@@ -10,7 +10,7 @@ import CustomAccountMenu from "@/customization/components/custom-AccountMenu";
 import { AxieStudioCounts } from "./components/axie-studio-counts";
 import { CustomOrgSelector } from "@/customization/components/custom-org-selector";
 import { CustomProductSelector } from "@/customization/components/custom-product-selector";
-import { ENABLE_DATASTAX_LANGFLOW } from "@/customization/feature-flags";
+import { ENABLE_DATASTAX_AXIE_STUDIO } from "@/customization/feature-flags";
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 import useTheme from "@/customization/hooks/use-custom-theme";
 import useAlertStore from "@/stores/alertStore";
@@ -65,13 +65,13 @@ export default function AppHeader(): JSX.Element {
           className="mr-1 flex h-8 w-8 items-center"
           data-testid="icon-ChevronLeft"
         >
-          {ENABLE_DATASTAX_LANGFLOW ? (
+          {ENABLE_DATASTAX_AXIE_STUDIO ? (
             <DataStaxLogo className="fill-black dark:fill-[white]" />
           ) : (
             <img src={AxieStudioLogo} alt="Axie Studio" className="h-6 w-auto" />
           )}
         </Button>
-        {ENABLE_DATASTAX_LANGFLOW && (
+        {ENABLE_DATASTAX_AXIE_STUDIO && (
           <>
             <CustomOrgSelector />
             <CustomProductSelector />
